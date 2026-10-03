@@ -33,6 +33,7 @@ jobs:
         run: |
           version="${GITHUB_REF_NAME#v}"
           docker buildx build --platform linux/amd64,linux/arm64 \
+            --annotation "index:org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
             --tag "$IMAGE:$version" --tag "$IMAGE:latest" --push .
           docker buildx imagetools inspect "$IMAGE:$version"
       - name: Log out

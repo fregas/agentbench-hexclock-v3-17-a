@@ -13,7 +13,7 @@ curl http://localhost:8080/
 curl http://localhost:8080/healthz
 ```
 
-If GHCR requests authentication, first run `docker login ghcr.io` with your
+The GHCR package is private. First run `docker login ghcr.io` with your
 GitHub username and a token with `read:packages` access. Tags `0.1.0` and
 `latest` are also published.
 
