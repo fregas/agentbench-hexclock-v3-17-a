@@ -1,0 +1,40 @@
+name: agentbench-hexclock-publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/fregas/agentbench-hexclock-v3-17-a
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        with:
+          name: agentbench-hexclock-builder
+      - name: Build, unit test, and vet
+        run: docker buildx build --load --tag agentbench-hexclock-check .
+      - name: Verify endpoints, non-root user, and size
+        run: ./scripts/verify-image.sh agentbench-hexclock-check
+      - name: Log in with the workflow token
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "$GHCR_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+      - name: Publish version and latest
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            --tag "$IMAGE:$version" --tag "$IMAGE:latest" --push .
+          docker buildx imagetools inspect "$IMAGE:$version"
+      - name: Log out
+        if: always()
+        run: docker logout ghcr.io
