@@ -8,14 +8,14 @@ Unknown paths return 404; unsupported methods return 405.
 Run the published image (Linux AMD64 or ARM64):
 
 ```sh
-docker run --rm --name agentbench-hexclock -p 8080:8080 ghcr.io/fregas/agentbench-hexclock-v3-17-a:0.1.1
+docker run --rm --name agentbench-hexclock -p 8080:8080 ghcr.io/fregas/agentbench-hexclock-v3-17-a:0.1.0
 curl http://localhost:8080/
 curl http://localhost:8080/healthz
 ```
 
 The GHCR package is private. First run `docker login ghcr.io` with your
-GitHub username and a token with `read:packages` access. Tags `0.1.0` and
-`latest` are also published.
+GitHub username and a token with `read:packages` access. Tag
+`latest` is also published.
 
 Test locally with Go 1.26+ using `go test -v ./...` and `go vet ./...`, or use
 Docker (the build runs both):
